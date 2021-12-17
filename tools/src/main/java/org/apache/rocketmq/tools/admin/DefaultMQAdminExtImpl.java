@@ -29,6 +29,8 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.QueryResult;
 import org.apache.rocketmq.client.admin.MQAdminExtInner;
@@ -655,17 +657,28 @@ public class DefaultMQAdminExtImpl implements MQAdminExt, MQAdminExtInner {
 
     @Override
     public GroupList queryTopicConsumeByWho(
-        String topic) throws InterruptedException, MQBrokerException, RemotingException,
-        MQClientException {
+            String topic) throws InterruptedException, MQBrokerException, RemotingException,
+            MQClientException {
+        return queryTopicConsumeByWho(topic, true);
+    }
+
+    @Override
+    public GroupList queryTopicConsumeByWho(
+            String topic, boolean onlyValidGroups) throws InterruptedException, MQBrokerException, RemotingException,
+            MQClientException {
         TopicRouteData topicRouteData = this.examineTopicRouteInfo(topic);
 
         for (BrokerData bd : topicRouteData.getBrokerDatas()) {
             String addr = bd.selectBrokerAddr();
             if (addr != null) {
-                return this.mqClientInstance.getMQClientAPIImpl().queryTopicConsumeByWho(addr, topic, timeoutMillis);
+                GroupList consumerGroupList = this.mqClientInstance.getMQClientAPIImpl().queryTopicConsumeByWho(addr, topic, timeoutMillis);
+                if (onlyValidGroups) {
+                    SubscriptionGroupWrapper allSubscriptionGroup = this.mqClientInstance.getMQClientAPIImpl().getAllSubscriptionGroup(addr, timeoutMillis);
+                    ConcurrentMap<String, SubscriptionGroupConfig> subscriptionGroupTable = allSubscriptionGroup.getSubscriptionGroupTable();
+                    consumerGroupList.getGroupList().retainAll(subscriptionGroupTable.keySet());
+                }
+                return consumerGroupList;
             }
-
-            break;
         }
 
         return null;
