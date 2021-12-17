@@ -401,6 +401,11 @@ public class DefaultMQAdminExt extends ClientConfig implements MQAdminExt {
     }
 
     @Override
+    public GroupList queryTopicConsumeByWho(String topic, boolean onlyValidGroups) throws RemotingConnectException, RemotingSendRequestException, RemotingTimeoutException, InterruptedException, MQBrokerException, RemotingException, MQClientException {
+        return this.defaultMQAdminExtImpl.queryTopicConsumeByWho(topic, onlyValidGroups);
+    }
+
+    @Override
     public List<QueueTimeSpan> queryConsumeTimeSpan(final String topic,
         final String group) throws InterruptedException, MQBrokerException,
         RemotingException, MQClientException {
