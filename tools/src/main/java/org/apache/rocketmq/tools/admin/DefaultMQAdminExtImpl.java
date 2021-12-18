@@ -659,7 +659,7 @@ public class DefaultMQAdminExtImpl implements MQAdminExt, MQAdminExtInner {
     public GroupList queryTopicConsumeByWho(
             String topic) throws InterruptedException, MQBrokerException, RemotingException,
             MQClientException {
-        return queryTopicConsumeByWho(topic, true);
+        return queryTopicConsumeByWho(topic, false);
     }
 
     @Override
