@@ -185,7 +185,7 @@ public interface MQAdminExt extends MQAdmin {
     GroupList queryTopicConsumeByWho(final String topic) throws RemotingConnectException, RemotingSendRequestException,
         RemotingTimeoutException, InterruptedException, MQBrokerException, RemotingException, MQClientException;
 
-    GroupList queryTopicConsumeByWho(final String topic, final boolean onlyValidGroups) throws RemotingConnectException, RemotingSendRequestException,
+    GroupList queryTopicConsumeByWho(final String topic, final boolean filterValidGroups) throws RemotingConnectException, RemotingSendRequestException,
             RemotingTimeoutException, InterruptedException, MQBrokerException, RemotingException, MQClientException;
 
     List<QueueTimeSpan> queryConsumeTimeSpan(final String topic,

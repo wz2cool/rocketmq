@@ -664,7 +664,7 @@ public class DefaultMQAdminExtImpl implements MQAdminExt, MQAdminExtInner {
 
     @Override
     public GroupList queryTopicConsumeByWho(
-            String topic, boolean onlyValidGroups) throws InterruptedException, MQBrokerException, RemotingException,
+            String topic, boolean filterValidGroups) throws InterruptedException, MQBrokerException, RemotingException,
             MQClientException {
         TopicRouteData topicRouteData = this.examineTopicRouteInfo(topic);
 
@@ -672,7 +672,7 @@ public class DefaultMQAdminExtImpl implements MQAdminExt, MQAdminExtInner {
             String addr = bd.selectBrokerAddr();
             if (addr != null) {
                 GroupList consumerGroupList = this.mqClientInstance.getMQClientAPIImpl().queryTopicConsumeByWho(addr, topic, timeoutMillis);
-                if (onlyValidGroups) {
+                if (filterValidGroups) {
                     SubscriptionGroupWrapper allSubscriptionGroup = this.mqClientInstance.getMQClientAPIImpl().getAllSubscriptionGroup(addr, timeoutMillis);
                     ConcurrentMap<String, SubscriptionGroupConfig> subscriptionGroupTable = allSubscriptionGroup.getSubscriptionGroupTable();
                     consumerGroupList.getGroupList().retainAll(subscriptionGroupTable.keySet());
